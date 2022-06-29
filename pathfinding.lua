@@ -56,7 +56,7 @@ local function sortByScore(node1, node2) -- Comparison function for getting best
     return f_score[node1] < f_score[node2];
 end
 
--- Main Pathfinding function -> A-Star algorithm (https://en.wikipedia.org/wiki/A*_search_algorithm)
+-- main pathfinding function -> A-Star algorithm (https://en.wikipedia.org/wiki/A*_search_algorithm)
 function pathfinding:aStar(map, start_node, end_node, allow_diagonals, separation)
     g_score, f_score = {}, {}
     previous_node, visited = {}, {}
@@ -107,15 +107,16 @@ function pathfinding:reconstructPath(node, start_node, end_node, list)
     end
 end
 
-function pathfinding:getPath(map, p1, p2, allow_diagonals, separation)
-    local start_node = mapping:addNode(map, snapToGrid(p1, separation))
-    local end_node = mapping:addNode(map, snapToGrid(p2, separation))
+-- Provide a map (3D Array of points with equal separation in 3 axis), a start and end point, the map point separation, and get a path (list of points) in return
+function pathfinding:getPath(map, start_point, end_point, allow_diagonals, separation)
+    local start_node = mapping:addNode(map, snapToGrid(start_point, separation))
+    local end_node = mapping:addNode(map, snapToGrid(end_point, separation))
 
     if (not start_node or not end_node) then return {} end
     local path = {}
 
     self:aStar(map, start_node, end_node, allow_diagonals, separation)  -- Compute the path
-    self:reconstructPath(end_node, start_node, end_node, path)               -- Reconstruct the path (Backtracking from previous_node)
+    self:reconstructPath(end_node, start_node, end_node, path)          -- Reconstruct the path (Backtracking from previous_node)
 
     return path
 end
