@@ -11,7 +11,7 @@ local TINSERT, TFIND, TREMOVE, TSORT = table.insert, table.find, table.remove, t
 
 -- List of midpoints of Faces (6), Edges (12), Vertices (8) of a cube in Euclidean Geometry ..
 -- Diagonal Moves are moves where more than one axis presents a change in position
-local moves, diagonal_moves = {
+local MOVES, DIAGONAL_MOVES = {
     V3(-1,0,0),V3(0,-1,0),V3(0,0,-1),V3(0,0,1),V3(0,1,0),V3(1,0,0)
 }, {
     V3(-1,-1,-1),V3(-1,-1,0),V3(-1,-1,1),V3(-1,0,-1),V3(-1,0,1),V3(-1,1,-1),V3(-1,1,0),V3(-1,1,1),V3(0,-1,-1),V3(0,-1,1),V3(0,1,-1),V3(0,1,1),V3(1,-1,-1),V3(1,-1,0),V3(1,-1,1),V3(1,0,-1),V3(1,0,1),V3(1,1,-1),V3(1,1,0),V3(1,1,1)
@@ -39,11 +39,11 @@ end
 function pathfinding:getNeighbors(map, node, allow_diagonals, separation)
     local neighbors = {}
 
-    for _,m in next, moves do
+    for _,m in next, MOVES do
         TINSERT(neighbors, mapping:vectorToMap(map, node + m*separation) or nil)
     end
     if (allow_diagonals) then 
-        for _,m in next, diagonal_moves do
+        for _,m in next, DIAGONAL_MOVES do
             TINSERT(neighbors, mapping:vectorToMap(map, node + m*separation) or nil)
         end
     end
