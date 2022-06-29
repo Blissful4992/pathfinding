@@ -1,5 +1,5 @@
 local pathfinding = {}
-local mapping = loadstring(game:HttpGet("https://raw.githubusercontent.com/Blissful4992/pathfinding/main/world_map.lua"))()
+local mapping = loadstring(game:HttpGet("https://raw.githubusercontent.com/Blissful4992/pathfinding/main/mapping.lua"))()
 
 -- Cached Functions --
 
@@ -120,3 +120,5 @@ function pathfinding:getPath(map, start_point, end_point, allow_diagonals, separ
 
     return path
 end
+
+return pathfinding
