@@ -1,17 +1,20 @@
 local mapping = {}
+
+-- Globals --
 local RAY_PRECISION = 1.0e-5;
 
---
-local NEW = Instance.new;
-local V3, CF = Vector3.new, CFrame.new;
-local ROUND, HUGE = math.round, math.huge; 
-local TINSERT, TFIND, TREMOVE, TSORT = table.insert, table.find, table.remove, table.sort;
-local RGB = Color3.fromRGB;
---
+-- Cached Functions --
+
+local V3 = Vector3.new;
+local ROUND = math.round; 
+local TINSERT = table.insert;
+
+-- Utility Functions --
 
 local function snap(a, b)
     return ROUND(a/b)*b;
 end
+-- Snaps a point to a virtual game grid (simple function used by a various of 3d building games e.g, bloxburg)
 local function snapToGrid(v, separation)
     return V3(
         snap(v.X, separation),
@@ -29,8 +32,11 @@ local function hasProperty(object, property)
     return success and value ~= object:FindFirstChild(property)
 end
 
---
+-- Mapping Functions --
 
+--[[
+    recursiveRay() will find all intersect points of all parts between points 'from' and 'to'
+]]
 function mapping:recursiveRay(from, to, results, params, c)
     c = c + 1
     if c > 100 then return end
@@ -74,6 +80,11 @@ function mapping:getValidIntersects(topIntersects, bottomIntersects, intersectCo
     return valid
 end
 
+--[[
+    A Traversable spot is a open spot for the player to traverse between either:
+        - the bottom of 1 object and the top of 1 object below it ...
+        - the top of the world and the top of 1 object below it
+]]
 function mapping:getTraversableSpots(pos, params, agentHeight)
     local from = V3(pos.x, 10000, pos.z)
     local to = V3(pos.x, -10000, pos.z)
@@ -93,6 +104,7 @@ function mapping:getTraversableSpots(pos, params, agentHeight)
     return self:getValidIntersects(topIntersects, bottomIntersects, intersectCount, agentHeight)
 end
 
+-- Adds a vector to a 3-Dimensional array
 function mapping:addNode(map, v)
     map[v.X] = map[v.X] or {}
     map[v.X][v.Y] = map[v.X][v.Y] or {}
@@ -108,9 +120,10 @@ function mapping:createMap(p1, p2, separation, agentHeight)
 
     for x = 0, diffx, separation do
         for z = 0, diffx, separation do
-            local p = snapToGrid(V3(p1.x+x*dx, p1.y, p1.z+z*dz), separation)
+            local new_x, new_z = p1.x+x*dx, p1.z+z*dz
+            local snapped = snapToGrid(V3(new_x, 0, new_z), separation)
 
-            for _, v in next, self:getTraversableSpots(p, agentHeight) do
+            for _, v in next, self:getTraversableSpots(snapped, agentHeight) do
                 self:addNode(map, snapToGrid(v, separation))
             end
         end
