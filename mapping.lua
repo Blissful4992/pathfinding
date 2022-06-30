@@ -1,7 +1,7 @@
 local mapping = {}
 
 -- Globals --
-local RAY_PRECISION = 1.0e-5;
+local RAY_PRECISION = 1.0e-4;
 
 -- Cached Functions --
 
