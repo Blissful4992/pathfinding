@@ -43,11 +43,11 @@ end
 --[[
     recursiveRay() will find all intersect points of all parts between points 'from' and 'to'
 ]]
-function mapping:recursiveRay(from, to, results, params, c)
+function mapping:recursiveRay(from, to, results, raycast_params, c)
     c = c + 1
     if c > 100 then return end
     
-    local result = workspace:Raycast(from, to-from, params)
+    local result = workspace:Raycast(from, to-from, raycast_params)
     
     if (result) then
         local intersect = result.Position
@@ -55,30 +55,28 @@ function mapping:recursiveRay(from, to, results, params, c)
             TINSERT(results, intersect)
         end
 
-        self:recursiveRay(intersect + getUnit(intersect, to)*RAY_PRECISION, to, results, params, c)
+        self:recursiveRay(intersect + getUnit(intersect, to)*RAY_PRECISION, to, results, raycast_params, c)
     end
 end
 
 --[[
     Key relation between top and bottom of parts:
-        if part.top is topIntersects[i] ...
-        then part.bottom is bottomIntersects[i]
+        if part.top is top_intersects[i] ...
+        then part.bottom is bottom_intersects[i]
     Therefore the key relation between top and bottom of open spaces between these parts:
-        if space.top is topIntersects[i] ...
-        then space.bottom is bottomIntersects[i-1] (if both lists are ordered by descending Y position)
+        if space.top is top_intersects[i] ...
+        then space.bottom is bottom_intersects[i-1] (if both lists are ordered by descending Y position)
 ]]
-function mapping:getValidIntersects(topIntersects, bottomIntersects, intersectCount, agentHeight)
-    local minHeight = agentHeight
-
+function mapping:getValidIntersects(top_intersects, bottom_intersects, intersect_count, agent_height)
     local valid = {}
 
-    for i = 1, intersectCount do
+    for i = 1, intersect_count do
 
-        local top = topIntersects[i]
-        local bottom = bottomIntersects[intersectCount-i+2]
+        local top = top_intersects[i]
+        local bottom = bottom_intersects[intersect_count-i+2]
 
         local size = bottom.y-top.y
-        if size < minHeight then continue end -- Space is either size 0 or too small to be inside of
+        if size < agent_height then continue end -- Space is either size 0 or too small to be inside of
 
         TINSERT(valid, top)
     end
@@ -91,37 +89,37 @@ end
         - the bottom of 1 object and the top of 1 object below it ...
         - the top of the world and the top of 1 object below it
 ]]
-function mapping:getTraversableSpots(pos, params, agentHeight)
+function mapping:getTraversableSpots(pos, agent_height, raycast_params)
     local from = V3(pos.x, 10000, pos.z)
     local to = V3(pos.x, -10000, pos.z)
 
-    local topIntersects = {}
-    self:recursiveRay(from, to, topIntersects, params, 0)
+    local top_intersects = {}
+    self:recursiveRay(from, to, top_intersects, raycast_params, 0)
 
-    local bottomIntersects = {}
-    self:recursiveRay(to, from, bottomIntersects, params, 0)
+    local bottom_intersects = {}
+    self:recursiveRay(to, from, bottom_intersects, raycast_params, 0)
 
-    local intersectCount = #topIntersects -- Either one
+    local intersect_count = #top_intersects -- Either one
 
-    if intersectCount == 0 or intersectCount ~= #bottomIntersects then return {} end
+    if intersect_count == 0 or intersect_count ~= #bottom_intersects then return {} end
 
-    TINSERT(bottomIntersects, from)
+    TINSERT(bottom_intersects, from)
 
-    return self:getValidIntersects(topIntersects, bottomIntersects, intersectCount, agentHeight)
+    return self:getValidIntersects(top_intersects, bottom_intersects, intersect_count, agent_height)
 end
 
-function mapping:createMap(p1, p2, separation, agentHeight)
+function mapping:createMap(p1, p2, separation, agent_height, raycast_params)
     local map = {}
 
     local diffx, diffz = p2.x-p1.x, p2.z-p1.z;
     local dx, dz = diffx < 0 and -1 or 1, diffz < 0 and -1 or 1;
 
     for x = 0, diffx, separation do
-        for z = 0, diffx, separation do
+        for z = 0, diffz, separation do
             local new_x, new_z = p1.x+x*dx, p1.z+z*dz
             local snapped = snapToGrid(V3(new_x, 0, new_z), separation)
 
-            for _, v in next, self:getTraversableSpots(snapped, agentHeight) do
+            for _, v in next, self:getTraversableSpots(snapped, agent_height, raycast_params) do
                 addNode(map, snapToGrid(v, separation))
             end
         end
