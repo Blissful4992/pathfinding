@@ -17,4 +17,5 @@ Mathematically we then have the relations between points of both groups:<br/>
 <br/>
 To get the size of the hole we just do `top[i].y - bottom[i-1].y` and we check if its taller than our agent height.<br/>
 <br/>
+This is an example of a terrain:<br/>
 ![](https://github.com/Blissful4992/pathfinding/raw/main/explanation.png)
