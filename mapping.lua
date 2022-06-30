@@ -50,7 +50,6 @@ function mapping:recursiveRay(from, to, results, raycast_params, c, reverse)
     local result = workspace:Raycast(from, to-from, raycast_params)
     
     if (result) then
-        print(result)
         local intersect = result.Position
 
         if (reverse) then self:recursiveRay(intersect + getUnit(intersect, to)*RAY_PRECISION, to, results, raycast_params, c, reverse) end
@@ -79,7 +78,7 @@ function mapping:getValidIntersects(top_intersects, bottom_intersects, intersect
         local bottom = bottom_intersects[i-1]
 
         local size = bottom.y-top.y
-        if size < agent_height then continue end -- Space is either size 0 or too small to be inside of
+        if size < agent_height then continue end -- Space is either size 0, negative, or too small to be inside of
 
         TINSERT(valid, top)
     end
@@ -115,6 +114,8 @@ end
 
 function mapping:createMap(p1, p2, separation, agent_height, raycast_params)
     local map = {}
+
+    raycast_params = raycast_params or RaycastParams.new()
 
     local diffx, diffz = p2.x-p1.x, p2.z-p1.z;
     local dx, dz = diffx < 0 and -1 or 1, diffz < 0 and -1 or 1;
