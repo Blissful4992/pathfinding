@@ -18,8 +18,9 @@ Mathematically we then have the relations between points of both groups:<br/>
 To get the size of the hole we just do `top[i].y - bottom[i-1].y` and we check if its taller than our agent height.<br/>
 If the size is 0, or it is negative, then it is not a hole.<br/>
 <br/>
-This is an example of a terrain (all 3 are identical, they are split for ease of understanding).<br/>
 This method can be done on thousands, even millions of points and it will generate the points traversable by your agent.<br/>
-With these points we then snap them to a grid of a fixed separation between grid points, after this, it's very easy to get the points next to a certain point (if you want to do pathfinding).<br/>
+With these points we then snap them to a grid of a fixed separation, after this, it's very easy to get the points next to a certain point (if you want to do pathfinding).<br/>
+<br/>
+This is an example of a terrain (all 3 are identical, they are split for ease of understanding).<br/>
 <br/>
 ![](https://i.imgur.com/XNVtIcf.png)
