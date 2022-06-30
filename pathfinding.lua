@@ -1,5 +1,4 @@
 local pathfinding = {}
-local mapping = loadstring(game:HttpGet("https://raw.githubusercontent.com/Blissful4992/pathfinding/main/mapping.lua"))()
 
 -- Cached Functions --
 
@@ -33,18 +32,26 @@ local function snapToGrid(v, separation)
         snap(v.Z, separation)
     )
 end
-
+local function vectorToMap(map, v)
+    return (map[v.X] and map[v.X][v.Y] and map[v.X][v.Y][v.Z]) or false
+end
+local function addNode(map, v)
+    map[v.X] = map[v.X] or {}
+    map[v.X][v.Y] = map[v.X][v.Y] or {}
+    map[v.X][v.Y][v.Z] = map[v.X][v.Y][v.Z] or v
+    return v
+end
 -- Pathfinding Functions --
 
 function pathfinding:getNeighbors(map, node, allow_diagonals, separation)
     local neighbors = {}
 
     for _,m in next, MOVES do
-        TINSERT(neighbors, mapping:vectorToMap(map, node + m*separation) or nil)
+        TINSERT(neighbors, vectorToMap(map, node + m*separation) or nil)
     end
     if (allow_diagonals) then 
         for _,m in next, DIAGONAL_MOVES do
-            TINSERT(neighbors, mapping:vectorToMap(map, node + m*separation) or nil)
+            TINSERT(neighbors, vectorToMap(map, node + m*separation) or nil)
         end
     end
     
@@ -109,8 +116,8 @@ end
 
 -- Provide a map (3D Array of points with equal separation in 3 axis), a start and end point, the map point separation, and get a path (list of points) in return
 function pathfinding:getPath(map, start_point, end_point, allow_diagonals, separation)
-    local start_node = mapping:addNode(map, snapToGrid(start_point, separation))
-    local end_node = mapping:addNode(map, snapToGrid(end_point, separation))
+    local start_node = addNode(map, snapToGrid(start_point, separation))
+    local end_node = addNode(map, snapToGrid(end_point, separation))
 
     if (not start_node or not end_node) then return {} end
     local path = {}
