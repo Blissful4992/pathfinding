@@ -11,9 +11,9 @@ These points will be the bottoms of all parts
 
 * The top of the world is point [0] for the bottom intersect group
 
-Mathematically we then have the relations between points of both groups:
-`Bottom of each hole (blue): top[i]`
-`Top of each hole (blue): bottom[i-1]`
-To get the size of the hole we just do `top[i].y - bottom[i-1].y` and we check if its taller than our agent height.
+Mathematically we then have the relations between points of both groups:<br/>
+`Bottom of each hole (blue): top[i]`<br/>
+`Top of each hole (blue): bottom[i-1]`<br/>
+To get the size of the hole we just do `top[i].y - bottom[i-1].y` and we check if its taller than our agent height.<br/>
 
 ![](https://github.com/Blissful4992/pathfinding/raw/main/explanation.png)
