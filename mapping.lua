@@ -6,7 +6,7 @@ local RAY_PRECISION = 1.0e-4;
 -- Cached Functions --
 
 local V3 = Vector3.new;
-local ROUND = math.round; 
+local ROUND, MIN = math.round, math.min; 
 local TINSERT = table.insert;
 
 -- Utility Functions --
@@ -43,19 +43,23 @@ end
 --[[
     recursiveRay() will find all intersect points of all parts between points 'from' and 'to'
 ]]
-function mapping:recursiveRay(from, to, results, raycast_params, c)
+function mapping:recursiveRay(from, to, results, raycast_params, c, reverse)
     c = c + 1
     if c > 100 then return end
     
     local result = workspace:Raycast(from, to-from, raycast_params)
     
     if (result) then
+        print(result)
         local intersect = result.Position
+
+        if (reverse) then self:recursiveRay(intersect + getUnit(intersect, to)*RAY_PRECISION, to, results, raycast_params, c, reverse) end
+
         if (not hasProperty(result.Instance, "CanCollide") or result.Instance.CanCollide == true) then
             TINSERT(results, intersect)
         end
 
-        self:recursiveRay(intersect + getUnit(intersect, to)*RAY_PRECISION, to, results, raycast_params, c)
+        if (not reverse) then self:recursiveRay(intersect + getUnit(intersect, to)*RAY_PRECISION, to, results, raycast_params, c, reverse) end
     end
 end
 
@@ -71,9 +75,8 @@ function mapping:getValidIntersects(top_intersects, bottom_intersects, intersect
     local valid = {}
 
     for i = 1, intersect_count do
-
         local top = top_intersects[i]
-        local bottom = bottom_intersects[intersect_count-i+2]
+        local bottom = bottom_intersects[i-1]
 
         local size = bottom.y-top.y
         if size < agent_height then continue end -- Space is either size 0 or too small to be inside of
@@ -90,22 +93,24 @@ end
         - the top of the world and the top of 1 object below it
 ]]
 function mapping:getTraversableSpots(pos, agent_height, raycast_params)
-    local from = V3(pos.x, 10000, pos.z)
-    local to = V3(pos.x, -10000, pos.z)
+    local from = V3(pos.x, 1000, pos.z)
+    local to = V3(pos.x, -1000, pos.z)
 
     local top_intersects = {}
-    self:recursiveRay(from, to, top_intersects, raycast_params, 0)
+    self:recursiveRay(from, to, top_intersects, raycast_params, 0, false)
 
     local bottom_intersects = {}
-    self:recursiveRay(to, from, bottom_intersects, raycast_params, 0)
+    self:recursiveRay(to, from, bottom_intersects, raycast_params, 0, true) -- Reverse is true because we want it ordered by descending Y position
 
-    local intersect_count = #top_intersects -- Either one
+    local top_count = #top_intersects
+    local bottom_count = #bottom_intersects
 
-    if intersect_count == 0 or intersect_count ~= #bottom_intersects then return {} end
+    if top_count == 0 then return {} end
+    if top_count ~= bottom_count then top_count = MIN(top_count, bottom_count) end
 
-    TINSERT(bottom_intersects, from)
+    bottom_intersects[0] = from
 
-    return self:getValidIntersects(top_intersects, bottom_intersects, intersect_count, agent_height)
+    return self:getValidIntersects(top_intersects, bottom_intersects, top_count, agent_height)
 end
 
 function mapping:createMap(p1, p2, separation, agent_height, raycast_params)
