@@ -1,6 +1,8 @@
-This work is licensed under a [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by-nc-nd/4.0/)
-[View Full LICENSE Text](https://github.com/Blissful4992/pathfinding/blob/main/LICENSE)
-
+This work is licensed under a [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by-nc-nd/4.0/)<br/>
+[View Full LICENSE Text](https://github.com/Blissful4992/pathfinding/blob/main/LICENSE)<br/>
+<br/>
+Link to a place where you can test this: [link](https://www.roblox.com/games/10042997623/pathfinding)<br/>
+<br/>
 ![](https://mirrors.creativecommons.org/presskit/buttons/88x31/svg/by-nc-nd.svg)
 ### Mapping
 * First we recursively find all intersect points from the top of the world to the bottom (red)
@@ -23,4 +25,14 @@ With these points we then snap them to a grid of a fixed separation, after this,
 <br/>
 This is an example of a terrain (all 3 are identical, they are split for ease of understanding).<br/>
 <br/>
-![](https://i.imgur.com/XNVtIcf.png)
+![](https://i.imgur.com/XNVtIcf.png)<br/>
+<br/>
+Here's an example of what you can get:<br/>
+<br/>
+![](https://cdn.discordapp.com/attachments/743547673205932042/992029703756075008/unknown.png)<br/>
+<br/>
+Here's an example of what you can expect in an actual game:<br/>
+![](https://cdn.discordapp.com/attachments/743547673205932042/992056535993831474/unknown.png)<br/>
+
+<br/>
+![]()<br/>
