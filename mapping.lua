@@ -31,6 +31,12 @@ local function hasProperty(object, property)
     end)
     return success and value ~= object:FindFirstChild(property)
 end
+local function addNode(map, v)
+    map[v.X] = map[v.X] or {}
+    map[v.X][v.Y] = map[v.X][v.Y] or {}
+    map[v.X][v.Y][v.Z] = map[v.X][v.Y][v.Z] or v
+    return v
+end
 
 -- Mapping Functions --
 
@@ -104,14 +110,6 @@ function mapping:getTraversableSpots(pos, params, agentHeight)
     return self:getValidIntersects(topIntersects, bottomIntersects, intersectCount, agentHeight)
 end
 
--- Adds a vector to a 3-Dimensional array
-function mapping:addNode(map, v)
-    map[v.X] = map[v.X] or {}
-    map[v.X][v.Y] = map[v.X][v.Y] or {}
-    map[v.X][v.Y][v.Z] = map[v.X][v.Y][v.Z] or v
-    return v
-end
-
 function mapping:createMap(p1, p2, separation, agentHeight)
     local map = {}
 
@@ -124,7 +122,7 @@ function mapping:createMap(p1, p2, separation, agentHeight)
             local snapped = snapToGrid(V3(new_x, 0, new_z), separation)
 
             for _, v in next, self:getTraversableSpots(snapped, agentHeight) do
-                self:addNode(map, snapToGrid(v, separation))
+                addNode(map, snapToGrid(v, separation))
             end
         end
     end
