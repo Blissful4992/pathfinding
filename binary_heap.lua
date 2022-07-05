@@ -10,7 +10,7 @@
 local Heap = {}
 Heap.__index = Heap
 
-local FLOOR = math.FLOOR
+local FLOOR = math.floor
 local function defaultCompare(a, b)
     return a > b
 end
