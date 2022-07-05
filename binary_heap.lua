@@ -16,23 +16,22 @@ local function defaultCompare(a, b)
 end
 
 local function siftUp(heap, index)
-    local parentIndex
-    if index ~= 1 then
-        parentIndex = FLOOR(index / 2)
-        if heap.Compare(heap[parentIndex], heap[index]) then
-            heap[parentIndex], heap[index] = heap[index], heap[parentIndex]
-            siftUp(heap, parentIndex)
-        end
+    if index == 1 then return end
+
+    local parentIndex = FLOOR(index / 2)
+    if heap.Compare(heap[parentIndex], heap[index]) then
+        heap[parentIndex], heap[index] = heap[index], heap[parentIndex]
+        siftUp(heap, parentIndex)
     end
 end
 
-local function siftdown(heap, index)
+local function siftDown(heap, index)
     local leftChildIndex, rightChildIndex, minIndex
     leftChildIndex = index * 2
     rightChildIndex = index * 2 + 1
+
     if rightChildIndex > #heap then
-        if leftChildIndex > #heap then
-            return
+        if leftChildIndex > #heap then return
         else
             minIndex = leftChildIndex
         end
@@ -46,7 +45,7 @@ local function siftdown(heap, index)
 
     if heap.Compare(heap[index], heap[minIndex]) then
         heap[minIndex], heap[index] = heap[index], heap[minIndex]
-        siftdown(heap, minIndex)
+        siftDown(heap, minIndex)
     end
 end
 
@@ -62,24 +61,20 @@ function Heap:Insert(value)
     table.insert(self, value)
     local size = #self
 
-    if size <= 1 then
-        return
-    end
+    if size <= 1 then return end
 
     siftUp(self, size)
 end
 
 function Heap:Pop()
-    if #self <= 0 then
-        return nil
-    end
+    if #self <= 0 then return nil end
 
     local toReturn = self[1]
 
     self[1] = self[#self]
     table.remove(self, #self)
     if #self > 0 then
-        siftdown(self, 1)
+        siftDown(self, 1)
     end
 
     return toReturn
@@ -87,9 +82,7 @@ end
 
 function Heap:Find(value)
     for i = 1, #self do
-        if self[i] == value then
-            return true
-        end
+        if self[i] == value then return true end
     end
 end
 
