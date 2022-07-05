@@ -1,13 +1,9 @@
-local heap = loadstring(game:HttpGet("https://raw.githubusercontent.com/Blissful4992/pathfinding/main/heap.lua"))()
 local pathfinding = {}
 
 -- Cached Functions --
-
 local V3 = Vector3.new;
 local ROUND, HUGE = math.round, math.huge; 
 local TINSERT, TFIND, TREMOVE, TSORT = table.insert, table.find, table.remove, table.sort;
-
--- Globals --
 
 -- List of midpoints of Faces (6), Edges (12), Vertices (8) of a cube in Euclidean Geometry ..
 -- Diagonal Moves are moves where more than one axis presents a change in position
@@ -60,8 +56,23 @@ function pathfinding:getNeighbors(map, node, separation, allow_diagonals)
 end
 
 local g_score, f_score, previous_node, visited;
-local function sortByScore(node1, node2) -- Comparison function for getting best f_score
-    return f_score[node1] > f_score[node2];
+
+local function lowestFScore(nodes)
+    local min, currentMin = HUGE;
+    local bestIndex, best;
+
+    for nodeIndex, node in ipairs(nodes) do
+        currentMin = f_score[node] or HUGE
+
+        if currentMin < min then
+            min = currentMin
+
+            best = node
+            bestIndex = nodeIndex
+        end
+    end
+
+    return best, bestIndex
 end
 
 -- main pathfinding function -> A-Star algorithm (https://en.wikipedia.org/wiki/A*_search_algorithm)
@@ -72,12 +83,11 @@ function pathfinding:aStar(map, start_node, end_node, separation, allow_diagonal
     g_score[start_node] = 0
     f_score[start_node] = getMagnitude(start_node, end_node)
 
-    local nodes, current = heap.new(sortByScore)
-
-    nodes:Insert(start_node)
+    local nodes = {start_node}
 
     while (#nodes > 0 and current ~= end_node) do
-        current = nodes:Pop()
+        local current, currentIndex = lowestFScore(nodes)
+        TREMOVE(nodes, currentIndex)
         visited[current] = true
 
         -- End Node is reached
@@ -95,8 +105,8 @@ function pathfinding:aStar(map, start_node, end_node, separation, allow_diagonal
                 g_score[neighbor] = tentative_g
                 f_score[neighbor] = tentative_g + getMagnitude(neighbor, end_node)
 
-                if not nodes:Find(neighbor) then
-                    nodes:Insert(neighbor)
+                if not TFIND(nodes, neighbor) then
+                    TINSERT(nodes, neighbor)
                 end
             end
         end
