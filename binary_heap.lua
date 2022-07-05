@@ -19,61 +19,63 @@ local function defaultCompare(a, b)
 end
 
 local function siftUp(heap, index)
-	local parentIndex
-	if index ~= 1 then
-		parentIndex = FLOOR(index/2)
-		if heap.Compare(heap[parentIndex], heap[index]) then
-			heap[parentIndex], heap[index] = heap[index], heap[parentIndex]
-			siftUp(heap, parentIndex)
-		end
-	end
+    local parentIndex
+    if index ~= 1 then
+        parentIndex = FLOOR(index / 2)
+        if heap.Compare(heap[parentIndex], heap[index]) then
+            heap[parentIndex], heap[index] = heap[index], heap[parentIndex]
+            siftUp(heap, parentIndex)
+        end
+    end
 end
 
 local function siftdown(heap, index)
-	local leftChildIndex, rightChildIndex, minIndex
-	leftChildIndex = index * 2
-	rightChildIndex = index * 2 + 1
-	if rightChildIndex > #heap then
-		if leftChildIndex > #heap then
-			return
-		else
-			minIndex = leftChildIndex
-		end
-	else
-		if not heap.Compare(heap[leftChildIndex], heap[rightChildIndex]) then
-			minIndex = leftChildIndex
-		else
-			minIndex = rightChildIndex
-		end
-	end
-	
-	if heap.Compare(heap[index], heap[minIndex]) then
-		heap[minIndex], heap[index] = heap[index], heap[minIndex]
-		siftdown(heap, minIndex)
-	end
+    local leftChildIndex, rightChildIndex, minIndex
+    leftChildIndex = index * 2
+    rightChildIndex = index * 2 + 1
+    if rightChildIndex > #heap then
+        if leftChildIndex > #heap then
+            return
+        else
+            minIndex = leftChildIndex
+        end
+    else
+        if not heap.Compare(heap[leftChildIndex], heap[rightChildIndex]) then
+            minIndex = leftChildIndex
+        else
+            minIndex = rightChildIndex
+        end
+    end
+
+    if heap.Compare(heap[index], heap[minIndex]) then
+        heap[minIndex], heap[index] = heap[index], heap[minIndex]
+        siftdown(heap, minIndex)
+    end
 end
 
 function Heap.new(comparator)
-	local newHeap = {}
-	setmetatable(newHeap, Heap)
-	newHeap.Compare = comparator or defaultCompare
-	
-	return newHeap
+    local newHeap = {}
+    setmetatable(newHeap, Heap)
+    newHeap.Compare = comparator or defaultCompare
+
+    return newHeap
 end
 
 function Heap:Insert(value)
-	table.insert(self, value)
+    table.insert(self, value)
     local size = #self
-	
-	if size <= 1 then
-		return
-	end
-	
-	siftUp(self, size)
+
+    if size <= 1 then
+        return
+    end
+
+    siftUp(self, size)
 end
 
 function Heap:Pop()
-	if #self <= 0 then return nil end
+    if #self <= 0 then
+        return nil
+    end
 
     local toReturn = self[1]
 
@@ -91,7 +93,7 @@ function Heap:Find(value)
         if self[i] == value then
             return true
         end
-	end
+    end
 end
 
 return Heap
