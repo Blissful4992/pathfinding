@@ -1,3 +1,4 @@
+local heap = loadstring(game:HttpGet("https://raw.githubusercontent.com/Blissful4992/pathfinding/main/heap.lua"))()
 local pathfinding = {}
 
 -- Cached Functions --
@@ -60,7 +61,7 @@ end
 
 local g_score, f_score, previous_node, visited;
 local function sortByScore(node1, node2) -- Comparison function for getting best f_score
-    return f_score[node1] < f_score[node2];
+    return f_score[node1] > f_score[node2];
 end
 
 -- main pathfinding function -> A-Star algorithm (https://en.wikipedia.org/wiki/A*_search_algorithm)
@@ -71,11 +72,12 @@ function pathfinding:aStar(map, start_node, end_node, separation, allow_diagonal
     g_score[start_node] = 0
     f_score[start_node] = getMagnitude(start_node, end_node)
 
-    local nodes, current = {start_node}
+    local nodes, current = heap.new(sortByScore)
+
+    nodes:Insert(start_node)
 
     while (#nodes > 0 and current ~= end_node) do
-        current = nodes[1]
-        TREMOVE(nodes, 1)
+        current = nodes:Pop()
         visited[current] = true
 
         -- End Node is reached
@@ -93,13 +95,11 @@ function pathfinding:aStar(map, start_node, end_node, separation, allow_diagonal
                 g_score[neighbor] = tentative_g
                 f_score[neighbor] = tentative_g + getMagnitude(neighbor, end_node)
 
-                if not TFIND(nodes, neighbor) then
-                    TINSERT(nodes, neighbor)
+                if not nodes:Find(neighbor) then
+                    nodes:Insert(neighbor)
                 end
             end
         end
-
-        TSORT(nodes, sortByScore)
     end
 end
 
