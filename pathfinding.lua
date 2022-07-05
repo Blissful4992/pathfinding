@@ -114,7 +114,7 @@ function pathfinding:reconstructPath(node, start_node, end_node, list)
     end
 end
 
--- Provide a map (3D Array of points with equal separation in 3 axis), a start and end point, the map point separation, and get a path (list of points) in return
+-- Provide a map (3D Array of points with constant separations in 3 axes), a start and end point, the map point separation, and get a path (list of points) in return
 function pathfinding:getPath(map, start_point, end_point, separation, allow_diagonals)
     local start_node = addNode(map, snapToGrid(start_point, separation))
     local end_node = addNode(map, snapToGrid(end_point, separation))
