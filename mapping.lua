@@ -17,9 +17,9 @@ end
 -- Snaps a point to a virtual game grid (simple function used by a various of 3d building games e.g, bloxburg)
 local function snapToGrid(v, separation)
     return V3(
-        snap(v.X, separation),
-        snap(v.Y, separation),
-        snap(v.Z, separation)
+        snap(v.X, separation.X),
+        snap(v.Y, separation.Y),
+        snap(v.Z, separation.Z)
     )
 end
 local function getUnit(a, b)
@@ -120,8 +120,8 @@ function mapping:createMap(p1, p2, separation, agent_height, raycast_params)
     local diffx, diffz = p2.x-p1.x, p2.z-p1.z;
     local dx, dz = diffx < 0 and -1 or 1, diffz < 0 and -1 or 1;
 
-    for x = 0, diffx, separation do
-        for z = 0, diffz, separation do
+    for x = 0, diffx, separation.X do
+        for z = 0, diffz, separation.Z do
             local new_x, new_z = p1.x+x*dx, p1.z+z*dz
             local snapped = snapToGrid(V3(new_x, 0, new_z), separation)
 
