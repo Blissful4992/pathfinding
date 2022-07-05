@@ -43,7 +43,7 @@ local function addNode(map, v)
 end
 -- Pathfinding Functions --
 
-function pathfinding:getNeighbors(map, node, allow_diagonals, separation)
+function pathfinding:getNeighbors(map, node, separation, allow_diagonals)
     local neighbors = {}
 
     for _,m in next, MOVES do
@@ -64,7 +64,7 @@ local function sortByScore(node1, node2) -- Comparison function for getting best
 end
 
 -- main pathfinding function -> A-Star algorithm (https://en.wikipedia.org/wiki/A*_search_algorithm)
-function pathfinding:aStar(map, start_node, end_node, allow_diagonals, separation)
+function pathfinding:aStar(map, start_node, end_node, separation, allow_diagonals)
     g_score, f_score = {}, {}
     previous_node, visited = {}, {}
 
@@ -82,7 +82,7 @@ function pathfinding:aStar(map, start_node, end_node, allow_diagonals, separatio
         if (current == end_node) then break end
         
         -- Compute and manage neighbors
-        local neighbors = self:getNeighbors(map, current, allow_diagonals, separation)
+        local neighbors = self:getNeighbors(map, current, separation, allow_diagonals)
         for _, neighbor in next, neighbors do
             if visited[neighbor] then continue end
 
@@ -115,14 +115,14 @@ function pathfinding:reconstructPath(node, start_node, end_node, list)
 end
 
 -- Provide a map (3D Array of points with equal separation in 3 axis), a start and end point, the map point separation, and get a path (list of points) in return
-function pathfinding:getPath(map, start_point, end_point, allow_diagonals, separation)
+function pathfinding:getPath(map, start_point, end_point, separation, allow_diagonals)
     local start_node = addNode(map, snapToGrid(start_point, separation))
     local end_node = addNode(map, snapToGrid(end_point, separation))
 
     if (not start_node or not end_node) then return {} end
     local path = {}
 
-    self:aStar(map, start_node, end_node, allow_diagonals, separation)  -- Compute the path
+    self:aStar(map, start_node, end_node, separation, allow_diagonals)  -- Compute the path
     self:reconstructPath(end_node, start_node, end_node, path)          -- Reconstruct the path (Backtracking from previous_node)
 
     return path
