@@ -2,9 +2,6 @@
 --		.new(comparator) - Creates a new Heap
 --			comparator: Uses this function to compare values. If none is given, will assume values are numbers and will find smallest value
 --						Comparator should accept two values and return true if a should be further up the heap than b and false otherwise
---		:Heapify(oldTable, comparator) - Converts a table to a Heap - Will destroy the provided table
---			comparator: The comparator to pass to Heap.new(comparator)
---		:Meld(heap1, heap2) - Creates a new Heap using the two provided Heaps
 -- A Heap object has the following functions:
 --		:Insert(value) - Adds a value to the Heap
 --		:Pop() - Removes the first element in the Heap and returns it
