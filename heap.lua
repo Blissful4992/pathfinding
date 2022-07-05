@@ -11,6 +11,7 @@ local Heap = {}
 Heap.__index = Heap
 
 local FLOOR = math.floor
+local INSERT, REMOVE = table.insert, table.remove
 local function defaultCompare(a, b)
     return a > b
 end
@@ -58,7 +59,7 @@ function Heap.new(comparator)
 end
 
 function Heap:Insert(value)
-    table.insert(self, value)
+    INSERT(self, value)
     local size = #self
 
     if size <= 1 then return end
@@ -72,7 +73,7 @@ function Heap:Pop()
     local toReturn = self[1]
 
     self[1] = self[#self]
-    table.remove(self, #self)
+    REMOVE(self, #self)
     if #self > 0 then
         siftDown(self, 1)
     end
