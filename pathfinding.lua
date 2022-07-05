@@ -27,9 +27,9 @@ end
 -- Snaps a point to a virtual game grid (simple function used by a various of 3d building games e.g, bloxburg)
 local function snapToGrid(v, separation)
     return V3(
-        snap(v.X, separation),
-        snap(v.Y, separation),
-        snap(v.Z, separation)
+        snap(v.X, separation.X),
+        snap(v.Y, separation.Y),
+        snap(v.Z, separation.Z)
     )
 end
 local function vectorToMap(map, v)
