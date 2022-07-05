@@ -111,7 +111,9 @@ for x,_x in pairs(MAP) do
 end
 
 -- Compute Path
+local t1 = os.clock()
 local Path = pathfinding:getPath(MAP, Start, End, Separation, true)
+warn(os.clock()-t1)
 
 -- Visualize Path
 local previous = Path[1];
