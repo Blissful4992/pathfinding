@@ -109,7 +109,7 @@ function pathfinding:reconstructPath(node, start_node, end_node, list)
 
     self:reconstructPath(previous_node[node], start_node, end_node, list)
 
-    if (node ~= end_node) then
+    if (node ~= start_node and node ~= end_node) then -- only insert path nodes
         TINSERT(list, node)
     end
 end
