@@ -83,7 +83,7 @@ function pathfinding:aStar(map, start_node, end_node, separation, allow_diagonal
     g_score[start_node] = 0
     f_score[start_node] = getMagnitude(start_node, end_node)
 
-    local nodes = {start_node}
+    local nodes, current = {start_node}
 
     while (#nodes > 0 and current ~= end_node) do
         local current, currentIndex = lowestFScore(nodes)
