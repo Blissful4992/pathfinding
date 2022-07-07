@@ -45,7 +45,7 @@ end
 ]]
 function mapping:recursiveRay(from, to, results, raycast_params, c, reverse)
     c = c + 1
-    if c > 100 then return end
+    if c > 1000 then return end
     
     local result = workspace:Raycast(from, to-from, raycast_params)
     
@@ -54,7 +54,7 @@ function mapping:recursiveRay(from, to, results, raycast_params, c, reverse)
 
         if (reverse) then self:recursiveRay(intersect + getUnit(intersect, to)*RAY_PRECISION, to, results, raycast_params, c, reverse) end
 
-        if (not hasProperty(result.Instance, "CanCollide") or result.Instance.CanCollide == true) then
+        if (not hasProperty(result.Instance, "CanCollide") or result.Instance.CanCollide) then
             TINSERT(results, intersect)
         end
 
