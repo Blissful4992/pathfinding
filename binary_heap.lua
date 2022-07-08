@@ -68,12 +68,13 @@ function Heap:Insert(value)
 end
 
 function Heap:Pop()
-    if #self <= 0 then return nil end
+    local size = #self
+    if size <= 0 then return nil end
 
     local toReturn = self[1]
 
-    self[1] = self[#self]
-    REMOVE(self, #self)
+    self[1] = self[size]
+    REMOVE(self, size)
     if #self > 0 then
         siftDown(self, 1)
     end
