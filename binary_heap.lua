@@ -5,7 +5,7 @@
 -- A Heap object has the following functions:
 --		:Insert(value) - Adds a value to the Heap
 --		:Pop() - Removes the first element in the Heap and returns it
---      :Find(value) - Returns true if the value is found
+--          :Find(value) - Returns true if the value is found
 
 local Heap = {}
 Heap.__index = Heap
