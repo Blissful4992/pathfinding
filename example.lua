@@ -1,5 +1,5 @@
 -- Libraries
-local pathfinding = loadstring(game:HttpGet("https://raw.githubusercontent.com/Blissful4992/pathfinding/main/pathfinding.lua"))()
+local pathfinding = loadstring(game:HttpGet("https://raw.githubusercontent.com/Blissful4992/pathfinding/main/pathfinding_heap.lua"))()
 local mapping = loadstring(game:HttpGet("https://raw.githubusercontent.com/Blissful4992/pathfinding/main/mapping.lua"))()
 
 -- Cached
@@ -130,6 +130,6 @@ end
 
 -- Loop through them and make the player walk to each point like this:
 -- for _,p in next, Path do
---     Player.Character.Humanoid:MoveTo(p.Position)
+--     Player.Character.Humanoid:MoveTo(p)
 --     Player.Character.Humanoid.MoveToFinished:Wait() -- This yields until the player has reached 'p.Position'
 -- end
