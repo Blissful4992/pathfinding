@@ -14,13 +14,16 @@ local MOVES, DIAGONAL_MOVES = {
 }
 
 -- Utility Functions --
-
 local function getMagnitude(a, b)
     return (b-a).magnitude;
+end
+local function getHeuristic(a, b, type)
+    
 end
 local function snap(a, b)
     return ROUND(a/b)*b;
 end
+
 -- Snaps a point to a virtual game grid (simple function used by a various of 3d building games e.g, bloxburg)
 local function snapToGrid(v, separation)
     return V3(
@@ -30,7 +33,7 @@ local function snapToGrid(v, separation)
     )
 end
 local function vectorToMap(map, v)
-    return (map[v.X] and map[v.X][v.Y] and map[v.X][v.Y][v.Z]) or false
+    return (map[v.X] and map[v.X][v.Y] and map[v.X][v.Y][v.Z]) or nil
 end
 local function addNode(map, v)
     map[v.X] = map[v.X] or {}
