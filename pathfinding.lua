@@ -33,7 +33,7 @@ local function snapToGrid(v, separation)
     )
 end
 local function vectorToMap(map, v)
-    return (map[v.X] and map[v.X][v.Y] and map[v.X][v.Y][v.Z]) or nil
+    return (map[v.X] and map[v.X][v.Y] and map[v.X][v.Y][v.Z]) or false
 end
 local function addNode(map, v)
     map[v.X] = map[v.X] or {}
