@@ -30,7 +30,7 @@ local function snapToGrid(v, separation)
         snap(v.Z, separation.Z)
     )
 end
-local function vectorToMap(v, map)
+local function vectorToMap(map, v)
     return (map[v.X] and map[v.X][v.Y] and map[v.X][v.Y][v.Z]) or false
 end
 local function addNode(map, v)
@@ -45,11 +45,11 @@ function pathfinding:getNeighbors(map, node, separation, allow_diagonals)
     local neighbors = {}
 
     for _,m in next, MOVES do
-        TINSERT(neighbors, vectorToMap(node + m*separation, map) or nil)
+        TINSERT(neighbors, vectorToMap(map, node + m*separation) or nil)
     end
     if (allow_diagonals) then 
         for _,m in next, DIAGONAL_MOVES do
-            TINSERT(neighbors, vectorToMap(node + m*separation, map) or nil)
+            TINSERT(neighbors, vectorToMap(map, node + m*separation) or nil)
         end
     end
     
@@ -129,37 +129,10 @@ function pathfinding:reconstructPath(node, start_node, end_node, list)
     end
 end
 
--- Find closest point in map, given max separation between them
-function pathfinding:getClosestMapNode(point, map, separation, allow_diagonals)
-    local snapped = snapToGrid(point, separation)
-    
-    if (vectorToMap(snapped, map)) then
-        return snapped
-    end
-
-    for _,m in next, MOVES do
-        local newPoint = vectorToMap(point + m*separation, map)
-        if (newPoint) then
-            return newPoint
-        end
-    end
-    
-    if (not allow_diagonals) then 
-        return nil
-    end
-
-    for _,m in next, DIAGONAL_MOVES do
-        local newPoint = vectorToMap(point + m*separation, map)
-        if (newPoint) then
-            return newPoint
-        end
-    end
-end
-
 -- Provide a map (3D Array of points with constant separations in 3 axes), a start and end point, the map point separation, and get a path (list of points) in return
 function pathfinding:getPath(map, start_point, end_point, separation, allow_diagonals)
-    local start_node = self:getClosestMapNode(start_point, map, separation, allow_diagonals)
-    local end_node = self:getClosestMapNode(end_point, map, separation, allow_diagonals)
+    local start_node = addNode(map, snapToGrid(start_point, separation))
+    local end_node = addNode(map, snapToGrid(end_point, separation))
 
     if (not start_node or not end_node) then
         return {}
