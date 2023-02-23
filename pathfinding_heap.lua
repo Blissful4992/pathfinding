@@ -31,7 +31,7 @@ local function snapToGrid(v, separation)
     )
 end
 local function vectorToMap(map, v)
-    return (map[v.X] and map[v.X][v.Y] and map[v.X][v.Y][v.Z]) or nil
+    return (map[v.X] and map[v.X][v.Y] and map[v.X][v.Y][v.Z]) or false
 end
 local function addNode(map, v)
     map[v.X] = map[v.X] or {}
@@ -62,7 +62,9 @@ local function comparator(a, b)
 end
 
 -- main pathfinding function -> A-Star algorithm (https://en.wikipedia.org/wiki/A*_search_algorithm)
-function pathfinding:aStar(map, start_node, end_node, separation, allow_diagonals)
+function pathfinding:aStar(map, start_node, end_node, separation, allow_diagonals, time_limit)
+    time_limit = time_limit or HUGE
+
     g_score, f_score = {}, {}
     previous_node, visited = {}, {}
 
@@ -72,12 +74,20 @@ function pathfinding:aStar(map, start_node, end_node, separation, allow_diagonal
     local nodes, current = heap.new(comparator)
     nodes:Insert(start_node)
 
+    local start = os.clock()
     while (#nodes > 0 and current ~= end_node) do
         local current, currentIndex = nodes:Pop()
         visited[current] = true
 
         -- End Node is reached
-        if (current == end_node) then break end
+        if (current == end_node) then
+            return true
+        end
+
+        -- Exceeded time frame
+        if (os.clock()-start > time_limit) then
+            return false
+        end
         
         -- Compute and manage neighbors
         local neighbors = self:getNeighbors(map, current, separation, allow_diagonals)
@@ -97,6 +107,8 @@ function pathfinding:aStar(map, start_node, end_node, separation, allow_diagonal
             end
         end
     end
+
+    return true
 end
 
 -- Recursive path reconstruction (backtracking from previous_node's)
@@ -115,12 +127,18 @@ function pathfinding:getPath(map, start_point, end_point, separation, allow_diag
     local start_node = addNode(map, snapToGrid(start_point, separation))
     local end_node = addNode(map, snapToGrid(end_point, separation))
 
-    if (not start_node or not end_node) then return {} end
+    if (not start_node or not end_node) then
+        return {}
+    end
+
+    -- Compute the path
+    if (not self:aStar(map, start_node, end_node, separation, allow_diagonals)) then
+        return {}
+    end
+
     local path = {}
-
-    self:aStar(map, start_node, end_node, separation, allow_diagonals)  -- Compute the path
-    self:reconstructPath(end_node, start_node, end_node, path)          -- Reconstruct the path (Backtracking from previous_node)
-
+    -- Reconstruct the path (Backtracking from previous_node)
+    self:reconstructPath(end_node, start_node, end_node, path)
     return path
 end
 
