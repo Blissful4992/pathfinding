@@ -160,7 +160,7 @@ function pathfinding:getClosestMapNode(point, map, separation, allow_diagonals)
     end
     
     if (not allow_diagonals) then 
-        continue
+        return nil
     end
 
     for _,m in next, DIAGONAL_MOVES do
