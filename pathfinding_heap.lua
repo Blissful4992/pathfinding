@@ -81,12 +81,12 @@ function pathfinding:aStar(map, start_node, end_node, separation, allow_diagonal
 
         -- End Node is reached
         if (current == end_node) then
-            return true
+            break
         end
 
         -- Exceeded time frame
         if (os.clock()-start > time_limit) then
-            return false
+            break
         end
         
         -- Compute and manage neighbors
@@ -106,6 +106,10 @@ function pathfinding:aStar(map, start_node, end_node, separation, allow_diagonal
                 end
             end
         end
+    end
+
+    if (os.clock()-start > time_limit) then
+        return false
     end
 
     return true
